@@ -87,7 +87,7 @@ Every call returns a Hash. Check `result["result"] == "OK"` for success, or read
 - **Phone numbers** — digits only, international format, no `+` or `00` prefix (e.g. `96598765432`)
 - **Multiple numbers** — comma-separated, max 200 per request
 - **Test mode** — set `"test": "1"` during development; messages are queued but not delivered
-- **Rate limit** — max 5 requests/second; stay under 2/second to avoid auto-block
+- **Rate limit**: max 10 requests/second per IP; going well above that auto-blocks your IP
 - **15s cooldown** — wait 15 seconds between messages to the same number
 
 ## Going Live Checklist
