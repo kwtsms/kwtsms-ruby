@@ -282,21 +282,29 @@ module KwtSMS
       result
     end
 
-    # Send SMS, retrying automatically on ERR028 (rate limit: wait 15 seconds).
+    # Send SMS, optionally retrying on ERR028 (duplicate SMS protection).
     #
-    # Waits 16 seconds between retries (15s required + 1s buffer).
-    # All other errors are returned immediately without retry.
+    # ERR028 is opt-in per account (Duplicate SMS protection in the account's
+    # API settings). When it is on and any number in the request was sent the
+    # same message within the account's window (10 seconds by default,
+    # configurable per account), the whole request is rejected and nothing is
+    # charged. Retry is off by default: ERR028 is returned like any other error
+    # unless max_retries > 0. All other errors are returned immediately.
+    #
+    # 2026-10-22 15:34 +03: retry off by default and wait is a parameter (default 10),
+    # was a hardcoded 3 retries x 16 s. The ERR028 window is per account, not a fixed 15 s.
     #
     # @param mobile [String, Array<String>] Phone number(s)
     # @param message [String] Message text
     # @param sender [String, nil] Sender ID override
-    # @param max_retries [Integer] Max ERR028 retries after first attempt (default 3)
+    # @param max_retries [Integer] Max ERR028 retries after first attempt (default 0, no retry)
+    # @param wait_seconds [Numeric] Seconds to wait before each retry (default 10)
     # @return [Hash] Same shape as send_sms. Never raises.
-    def send_with_retry(mobile, message, sender: nil, max_retries: 3)
+    def send_with_retry(mobile, message, sender: nil, max_retries: 0, wait_seconds: 10)
       result = send_sms(mobile, message, sender: sender)
       retries = 0
       while result["code"] == "ERR028" && retries < max_retries
-        sleep(16)
+        sleep(wait_seconds)
         result = send_sms(mobile, message, sender: sender)
         retries += 1
       end

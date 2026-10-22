@@ -14,7 +14,7 @@ Every error response includes:
 
 **User-recoverable** (show helpful message to the user):
 - ERR006/ERR025: invalid phone number
-- ERR028: rate limited (wait 15 seconds)
+- ERR028: sent to the same number too soon (opt-in duplicate SMS protection; wait for the account's window, 10 seconds by default)
 - ERR031/ERR032: message content rejected
 
 **System-level** (show generic message, log real error, alert admin):

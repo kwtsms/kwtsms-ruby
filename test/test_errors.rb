@@ -75,9 +75,10 @@ class TestEnrichError < Minitest::Test
     assert_includes result["action"].downcase, "country"
   end
 
-  def test_err028_mentions_15_seconds
+  # 2026-10-22 15:34 +03: assert the corrected ERR028 text, the window is per account, not 15 s.
+  def test_err028_says_too_soon
     data = { "result" => "ERROR", "code" => "ERR028" }
     result = KwtSMS.enrich_error(data)
-    assert_includes result["action"], "15 seconds"
+    assert_includes result["action"], "too soon"
   end
 end

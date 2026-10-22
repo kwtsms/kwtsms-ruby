@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `send_with_retry`: ERR028 retry is now off by default (`max_retries: 0`), and the wait is a new `wait_seconds:` keyword (default 10) instead of a hardcoded 16 seconds. Duplicate SMS protection (ERR028) is opt-in per account and its window is configurable per account (10 seconds by default); when on, the whole request is rejected and nothing is charged.
+- ERR028 action text no longer states a fixed 15 seconds.
+
+### Docs
+
+- Test mode: test messages are queued but not delivered. Their credits are held until you delete them from the Sending Queue in your kwtsms.com account.
+
 ## [0.3.1] - 2026-03-15
 
 ### Fixed

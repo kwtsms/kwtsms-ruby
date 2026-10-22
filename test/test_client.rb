@@ -246,7 +246,8 @@ class TestClientSend < Minitest::Test
 
     result = @client.send_sms("96598765432", "Hello")
     assert_equal "ERROR", result["result"]
-    assert_includes result["action"], "15 seconds"
+    # 2026-10-22 15:34 +03: ERR028 text no longer states a fixed 15 s.
+    assert_includes result["action"], "too soon"
   end
 
   def test_send_err008
@@ -460,7 +461,7 @@ class TestClientSendWithRetry < Minitest::Test
         end
       end
 
-    # Stub sleep to avoid waiting 16s in tests
+    # Stub sleep to avoid waiting in tests (2026-10-22 15:34 +03: wait is wait_seconds, no longer 16 s)
     @client.stub(:sleep, nil) do
       result = @client.send_with_retry("96598765432", "Hello", max_retries: 3)
       assert_equal "OK", result["result"]
@@ -494,6 +495,47 @@ class TestClientSendWithRetry < Minitest::Test
     result = @client.send_with_retry("96598765432", "Hello", max_retries: 3)
     assert_equal "ERROR", result["result"]
     assert_equal "ERR003", result["code"]
+  end
+
+  # 2026-10-22 15:34 +03: retry is off by default (max_retries 0), wait defaults to 10 s.
+  def test_send_with_retry_default_does_not_retry
+    call_count = 0
+    stub_request(:post, "https://www.kwtsms.com/API/send/")
+      .to_return do
+        call_count += 1
+        { status: 200,
+          body: { "result" => "ERROR", "code" => "ERR028", "description" => "Rate limit" }.to_json,
+          headers: { "Content-Type" => "application/json" } }
+      end
+
+    result = @client.send_with_retry("96598765432", "Hello")
+    assert_equal "ERR028", result["code"]
+    assert_equal 1, call_count
+  end
+
+  def test_send_with_retry_waits_wait_seconds
+    call_count = 0
+    stub_request(:post, "https://www.kwtsms.com/API/send/")
+      .to_return do
+        call_count += 1
+        if call_count == 1
+          { status: 200,
+            body: { "result" => "ERROR", "code" => "ERR028", "description" => "Rate limit" }.to_json,
+            headers: { "Content-Type" => "application/json" } }
+        else
+          { status: 200,
+            body: { "result" => "OK", "msg-id" => "300", "numbers" => 1,
+                    "points-charged" => 1, "balance-after" => 97 }.to_json,
+            headers: { "Content-Type" => "application/json" } }
+        end
+      end
+
+    slept = []
+    @client.stub(:sleep, ->(s) { slept << s }) do
+      result = @client.send_with_retry("96598765432", "Hello", max_retries: 1)
+      assert_equal "OK", result["result"]
+    end
+    assert_equal [10], slept
   end
 end
 

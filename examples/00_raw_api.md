@@ -88,7 +88,7 @@ Every call returns a Hash. Check `result["result"] == "OK"` for success, or read
 - **Multiple numbers** — comma-separated, max 200 per request
 - **Test mode** — set `"test": "1"` during development; messages are queued but not delivered
 - **Rate limit**: max 10 requests/second per IP; going well above that auto-blocks your IP
-- **15s cooldown** — wait 15 seconds between messages to the same number
+- **Duplicate SMS protection (ERR028)**: opt-in per account. When on, sending the same message to a number within the account's window (10 seconds by default) rejects the whole request, and nothing is charged
 
 ## Going Live Checklist
 

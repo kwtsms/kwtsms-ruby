@@ -3,7 +3,8 @@
 require_relative "test_helper"
 
 # Real API integration tests. Skipped if RUBY_USERNAME / RUBY_PASSWORD not set.
-# Always uses test_mode: true (no credits consumed).
+# Always uses test_mode: true (not delivered; credits held until you delete the
+# queued test messages from the Sending Queue). 2026-10-22 15:34 +03: corrected, test sends hold credits.
 class TestIntegration < Minitest::Test
   def setup
     WebMock.allow_net_connect!

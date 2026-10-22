@@ -133,10 +133,10 @@ Response on success:
 
 ### send_with_retry
 
-Send with automatic retry on ERR028 (15-second rate limit).
+Send with optional retry on ERR028. ERR028 comes from Duplicate SMS protection, which is opt-in per account (in the account's API settings). When it is on and any number in the request was sent the same message within the account's window (10 seconds by default, configurable per account), the whole request is rejected with ERR028 and nothing is charged. Retry is off by default (`max_retries: 0`); set `wait_seconds:` to your account's window.
 
 ```ruby
-result = sms.send_with_retry("96598765432", "Hello!", max_retries: 3)
+result = sms.send_with_retry("96598765432", "Hello!", max_retries: 1, wait_seconds: 10)
 ```
 
 ### senderids
@@ -381,7 +381,7 @@ Check the **Sending Queue** at [kwtsms.com](https://www.kwtsms.com/login/). If y
 
 **2. What is the difference between Test mode and Live mode?**
 
-**Test mode** (`KWTSMS_TEST_MODE=1`) sends your message to the kwtSMS queue but does NOT deliver it to the handset. No SMS credits are consumed. Use this during development. **Live mode** (`KWTSMS_TEST_MODE=0`) delivers the message for real and deducts credits. Always develop in test mode and switch to live only when ready for production.
+**Test mode** (`KWTSMS_TEST_MODE=1`) sends your message to the kwtSMS queue but does NOT deliver it to the handset. Its credits are held until you delete it from the Sending Queue in your kwtsms.com account. Use this during development. **Live mode** (`KWTSMS_TEST_MODE=0`) delivers the message for real and deducts credits. Always develop in test mode and switch to live only when ready for production.
 
 **3. What is a Sender ID and why should I not use "KWT-SMS" in production?**
 
