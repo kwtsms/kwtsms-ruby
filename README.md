@@ -2,11 +2,11 @@
 
 [![Gem Version](https://img.shields.io/gem/v/kwtsms.svg)](https://rubygems.org/gems/kwtsms)
 [![Gem Downloads](https://img.shields.io/gem/dt/kwtsms.svg)](https://rubygems.org/gems/kwtsms)
-[![CI](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/codeql.yml/badge.svg)](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/codeql.yml)
-[![Bundle Audit](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/audit.yml/badge.svg)](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/audit.yml)
-[![GitGuardian](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/gitguardian.yml/badge.svg)](https://github.com/boxlinknet/kwtsms-ruby/actions/workflows/gitguardian.yml)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/boxlinknet/kwtsms-ruby/badge)](https://scorecard.dev/viewer/?uri=github.com/boxlinknet/kwtsms-ruby)
+[![CI](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/codeql.yml/badge.svg)](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/codeql.yml)
+[![Bundle Audit](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/audit.yml/badge.svg)](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/audit.yml)
+[![GitGuardian](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/gitguardian.yml/badge.svg)](https://github.com/kwtsms/kwtsms-ruby/actions/workflows/gitguardian.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/kwtsms/kwtsms-ruby/badge)](https://scorecard.dev/viewer/?uri=github.com/kwtsms/kwtsms-ruby)
 [![Ruby](https://img.shields.io/badge/Ruby-%3E%3D%202.7-red.svg)](https://www.ruby-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -247,7 +247,7 @@ Messages are cleaned automatically before sending to prevent silent delivery fai
 
 ## CLI
 
-For a standalone CLI tool that works on all operating systems, see [kwtsms-cli](https://github.com/boxlinknet/kwtsms-cli).
+For a standalone CLI tool that works on all operating systems, see [kwtsms-cli](https://github.com/kwtsms/kwtsms-cli).
 
 ## Credential Management
 
@@ -407,7 +407,7 @@ International sending is **disabled by default** on kwtSMS accounts. Log in to y
 - **[kwtSMS Dashboard](https://www.kwtsms.com/login/)**: Recharge credits, buy Sender IDs, view message logs, manage coverage
 - **[Other Integrations](https://www.kwtsms.com/integrations.html)**: Plugins and integrations for other platforms and languages
 - **[RubyGems](https://rubygems.org/gems/kwtsms)**: Package on RubyGems.org
-- **[GitHub](https://github.com/boxlinknet/kwtsms-ruby)**: Source code and issue tracker
+- **[GitHub](https://github.com/kwtsms/kwtsms-ruby)**: Source code and issue tracker
 - **[Changelog](CHANGELOG.md)** | **[Contributing](CONTRIBUTING.md)** | **[Security](SECURITY.md)**
 
 ## License
