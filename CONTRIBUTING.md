@@ -4,7 +4,7 @@ Contributions are welcome: bug reports, fixes, new examples, and documentation i
 
 ## Before You Start
 
-- Search [existing issues](https://github.com/boxlinknet/kwtsms-ruby/issues) first
+- Search [existing issues](https://github.com/kwtsms/kwtsms-ruby/issues) first
 - Open an issue before large changes to discuss the approach
 - All contributions must pass the test suite
 
@@ -13,7 +13,7 @@ Contributions are welcome: bug reports, fixes, new examples, and documentation i
 Prerequisites: Ruby 2.7+ and Bundler. Or use Docker (no local Ruby needed).
 
 ```bash
-git clone https://github.com/boxlinknet/kwtsms-ruby.git
+git clone https://github.com/kwtsms/kwtsms-ruby.git
 cd kwtsms-ruby
 bundle install
 ```
@@ -138,7 +138,7 @@ Follow TDD:
 
 ## Reporting Bugs
 
-Open an issue at https://github.com/boxlinknet/kwtsms-ruby/issues with:
+Open an issue at https://github.com/kwtsms/kwtsms-ruby/issues with:
 
 - Ruby version (`ruby -v`)
 - Gem version (`KwtSMS::VERSION`)
