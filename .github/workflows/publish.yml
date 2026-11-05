@@ -30,7 +30,7 @@ jobs:
           fi
           echo "Version verified: $GEM_VERSION"
 
-      # 2026-11-05 08:15 +03: test number from the repo secret so no test skips at release (int-testnumber).
+      # 2026-11-05 08:13 +03: test number from the repo secret so no test skips at release (int-testnumber).
       - name: Run tests before publish
         env:
           KWTSMS_TEST_NUMBER: ${{ secrets.KWTSMS_TEST_NUMBER }}
