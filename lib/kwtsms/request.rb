@@ -12,13 +12,24 @@ module KwtSMS
   # unix-timestamp values in API responses are server time, not UTC.
   SERVER_TIMEZONE = "Asia/Kuwait (GMT+3)"
 
+  # Build the User-Agent "[app token ]kwtsms-ruby/<VERSION>". The app token is caller input: anything
+  # outside printable ASCII is removed (CR/LF would split the header), whitespace runs become "-",
+  # leading/trailing "-" are trimmed, and it is cut to 64 characters. Empty means the library token only.
+  # 2026-11-05 14:19 +03: added so kwtSMS can count accounts per integration (#939).
+  def self.build_user_agent(app_name = "")
+    app = app_name.to_s.gsub(/[^\x20-\x7e]+/, "").strip.gsub(/\s+/, "-").gsub(/\A-+|-+\z/, "")[0, 64]
+    lib = "kwtsms-ruby/#{VERSION}"
+    app.empty? ? lib : "#{app} #{lib}"
+  end
+
   # POST to a kwtSMS REST/JSON API endpoint.
   #
   # Always sets Content-Type and Accept: application/json.
   # Strips password from log entry.
   # Returns parsed JSON hash.
   # Raises RuntimeError on network / HTTP / parse failure.
-  def self.api_request(endpoint, payload, log_file = "")
+  # 2026-11-05 14:19 +03: user_agent parameter added, sent on every call (#939).
+  def self.api_request(endpoint, payload, log_file = "", user_agent = nil)
     url = URI.parse("#{BASE_URL}#{endpoint}/")
 
     safe_payload = payload.transform_keys(&:to_s).each_with_object({}) do |(k, v), h|
@@ -44,6 +55,7 @@ module KwtSMS
       request = Net::HTTP::Post.new(url.path)
       request["Content-Type"] = "application/json"
       request["Accept"] = "application/json"
+      request["User-Agent"] = user_agent || build_user_agent # 2026-11-05 14:19 +03: kwtsms-ruby/<version> (#939)
       request.body = JSON.generate(payload)
 
       response = http.request(request)

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- The client sends a User-Agent `kwtsms-ruby/<version>` (name and version only, no personal data) so kwtSMS can see which integrations are in use. An optional `app_name:` keyword on `KwtSMS::Client.new` puts your app's token in front, e.g. `kwtsms-wordpress/3.5.2 kwtsms-ruby/0.3.1`. New `KwtSMS.build_user_agent` and `client.user_agent`.
+
 ### Changed
 - Package author and license holder are now kwtSMS.
 

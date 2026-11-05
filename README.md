@@ -82,6 +82,16 @@ sms = KwtSMS::Client.new(
 )
 ```
 
+### User-Agent
+
+Every API request carries the User-Agent `kwtsms-ruby/<version>`: the library name and version only, no
+personal or customer data. Pass your own product token as `app_name:` to put it in front:
+
+```ruby
+sms = KwtSMS::Client.new("ruby_username", "ruby_password", app_name: "my-shop/2.1.0")
+# User-Agent: my-shop/2.1.0 kwtsms-ruby/0.3.1
+```
+
 ## API Reference
 
 ### verify

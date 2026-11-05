@@ -24,17 +24,22 @@ module KwtSMS
   #   2026-11-05 08:07 +03: placeholder instead of a sample mobile number (it belongs to a real person), int-testnumber.
   #   balance = sms.balance
   class Client
+    # 2026-11-05 14:19 +03: user_agent reader added, the User-Agent sent on every call (#939).
     attr_reader :username, :sender_id, :test_mode, :log_file,
-                :cached_balance, :cached_purchased
+                :cached_balance, :cached_purchased, :user_agent
 
     # @param username [String] API username (not your account phone number)
     # @param password [String] API password
     # @param sender_id [String] Sender ID shown on recipient's phone (default: "KWT-SMS")
     # @param test_mode [Boolean] When true, messages are queued but not delivered (default: false)
     # @param log_file [String] Path to JSONL log file. Set to "" to disable logging.
-    def initialize(username, password, sender_id: "KWT-SMS", test_mode: false, log_file: "kwtsms.log")
+    # @param app_name [String] Optional product token of the calling app or plugin, e.g. "kwtsms-wordpress/3.5.2",
+    #   sent before the library token in the User-Agent (2026-11-05 14:19 +03, #939).
+    def initialize(username, password, sender_id: "KWT-SMS", test_mode: false, log_file: "kwtsms.log", app_name: "")
       raise ArgumentError, "username and password are required" if username.nil? || username.empty? || password.nil? || password.empty?
 
+      # 2026-11-05 14:19 +03: identify the caller to the API (name and version only, no personal data), #939.
+      @user_agent = KwtSMS.build_user_agent(app_name)
       @username = username
       @password = password
       @sender_id = sender_id
@@ -94,7 +99,7 @@ module KwtSMS
     #   balance: Float or nil
     #   error:   nil or error message string
     def verify
-      data = KwtSMS.api_request("balance", creds, @log_file)
+      data = KwtSMS.api_request("balance", creds, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
       if data["result"] == "OK"
         @cached_balance = data["available"].to_f
         @cached_purchased = data["purchased"].to_f
@@ -120,7 +125,7 @@ module KwtSMS
     # List sender IDs registered on this account via /senderid/.
     # Returns a consistent hash. Never raises, never crashes.
     def senderids
-      data = KwtSMS.api_request("senderid", creds, @log_file)
+      data = KwtSMS.api_request("senderid", creds, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
       if data["result"] == "OK"
         { "result" => "OK", "senderids" => data["senderid"] || [] }
       else
@@ -134,7 +139,7 @@ module KwtSMS
     # List active country prefixes via /coverage/.
     # Returns the full API response hash with error enrichment.
     def coverage
-      data = KwtSMS.api_request("coverage", creds, @log_file)
+      data = KwtSMS.api_request("coverage", creds, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
       KwtSMS.enrich_error(data)
     rescue RuntimeError => e
       { "result" => "ERROR", "code" => "NETWORK", "description" => e.message,
@@ -181,7 +186,7 @@ module KwtSMS
 
       payload = creds.merge("mobile" => valid_normalized.join(","))
       begin
-        data = KwtSMS.api_request("validate", payload, @log_file)
+        data = KwtSMS.api_request("validate", payload, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
         if data["result"] == "OK"
           mobile = data["mobile"] || {}
           result["ok"] = mobile["OK"] || []
@@ -263,7 +268,7 @@ module KwtSMS
           "test" => @test_mode ? "1" : "0"
         )
         begin
-          result = KwtSMS.api_request("send", payload, @log_file)
+          result = KwtSMS.api_request("send", payload, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
         rescue RuntimeError => e
           return {
             "result" => "ERROR",
@@ -346,7 +351,7 @@ module KwtSMS
         waits.each_with_index do |wait, attempt|
           sleep(wait) if wait > 0
           begin
-            data = KwtSMS.api_request("send", payload, @log_file)
+            data = KwtSMS.api_request("send", payload, @log_file, @user_agent) # 2026-11-05 14:19 +03: UA (#939)
           rescue RuntimeError => e
             errors << { "batch" => i + 1, "code" => "NETWORK", "description" => e.message }
             data = nil
