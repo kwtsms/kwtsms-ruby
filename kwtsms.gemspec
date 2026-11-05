@@ -5,7 +5,8 @@ require_relative "lib/kwtsms/version"
 Gem::Specification.new do |spec|
   spec.name          = "kwtsms"
   spec.version       = KwtSMS::VERSION
-  spec.authors       = ["boxlink"]
+  # 2026-11-05 12:08 +03: author boxlink -> kwtSMS, owner decision 2026-11-05 00:34, int-license
+  spec.authors       = ["kwtSMS"]
   spec.email         = ["info@boxlink.net"]
 
   spec.summary       = "Ruby client for the kwtSMS API (kwtsms.com)"

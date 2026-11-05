@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Package author and license holder are now kwtSMS.
 
 - `send_with_retry`: ERR028 retry is now off by default (`max_retries: 0`), and the wait is a new `wait_seconds:` keyword (default 10) instead of a hardcoded 16 seconds. Duplicate SMS protection (ERR028) is opt-in per account and its window is configurable per account (10 seconds by default); when on, the whole request is rejected and nothing is charged.
 - ERR028 action text no longer states a fixed 15 seconds.
