@@ -84,7 +84,7 @@ Every call returns a Hash. Check `result["result"] == "OK"` for success, or read
 
 - **Always POST** — never GET (credentials leak in server logs)
 - **Always set both headers** — `Content-Type: application/json` and `Accept: application/json`
-- **Phone numbers** — digits only, international format, no `+` or `00` prefix (e.g. `96598765432`)
+- **Phone numbers**: digits only, international format, no `+` or `00` prefix (e.g. `965XXXXXXXX`)
 - **Multiple numbers** — comma-separated, max 200 per request
 - **Test mode** — set `"test": "1"` during development; messages are queued but not delivered
 - **Rate limit**: max 10 requests/second per IP; going well above that auto-blocks your IP

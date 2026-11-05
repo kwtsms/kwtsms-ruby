@@ -89,7 +89,7 @@ end
 
 divider "4. VALIDATE — POST /API/validate/"
 
-numbers_to_validate = "96598765432,96512345678,123"
+numbers_to_validate = "965XXXXXXXX,96512345678,123"
 
 result = api_request("validate", "mobile" => numbers_to_validate)
 if result["result"] == "OK"
@@ -107,7 +107,7 @@ divider "5. SEND SMS — POST /API/send/"
 
 result = api_request("send",
   "sender"  => SENDER_ID,
-  "mobile"  => "96598765432",
+  "mobile"  => "965XXXXXXXX",
   "message" => "Hello from kwtSMS raw API ruby example!",
   "test"    => TEST_MODE
 )

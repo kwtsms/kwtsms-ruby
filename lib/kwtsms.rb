@@ -7,12 +7,14 @@
 #
 #   sms = KwtSMS::Client.from_env                          # reads .env / env vars
 #   ok, balance, err = sms.verify
-#   result = sms.send_sms("96598765432", "Your OTP is: 123456")
-#   result = sms.send_sms("96598765432", "Hello", sender: "MY-APP")
+#   result = sms.send_sms("965XXXXXXXX", "Your OTP is: 123456")
+#   result = sms.send_sms("965XXXXXXXX", "Hello", sender: "MY-APP")
 #   balance = sms.balance
 #
 # Utility functions:
-#   KwtSMS.normalize_phone("+965 9876 5432")
+#   KwtSMS.normalize_phone("+965 XXXX XXXX")
+#
+# 2026-11-05 08:07 +03: placeholder instead of a sample mobile number (it belongs to a real person), int-testnumber.
 #   KwtSMS.validate_phone_input("user@email.com")
 #   KwtSMS.clean_message("Hello \u{1F600} world")
 

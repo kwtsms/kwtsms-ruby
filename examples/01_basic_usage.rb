@@ -26,7 +26,7 @@ else
 end
 
 # Send a single SMS
-result = sms.send_sms("96598765432", "Hello from kwtsms-ruby!")
+result = sms.send_sms("965XXXXXXXX", "Hello from kwtsms-ruby!")
 if result["result"] == "OK"
   puts "Sent! msg-id: #{result['msg-id']}"
   puts "Balance after: #{result['balance-after']}"
@@ -37,13 +37,13 @@ end
 
 # Send to multiple numbers
 result = sms.send_sms(
-  ["96598765432", "96512345678"],
+  ["965XXXXXXXX", "96512345678"],
   "Bulk message test"
 )
 puts result.inspect
 
 # Validate phone numbers
-report = sms.validate(["96598765432", "invalid", "+96512345678"])
+report = sms.validate(["965XXXXXXXX", "invalid", "+96512345678"])
 puts "Valid: #{report['ok']}"
 puts "Errors: #{report['er']}"
 puts "Rejected: #{report['rejected']}"

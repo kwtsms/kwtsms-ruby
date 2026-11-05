@@ -27,7 +27,7 @@ before do
 end
 
 # POST /otp/request
-# Body: { "phone": "+96598765432", "captcha_token": "..." }
+# Body: { "phone": "+965XXXXXXXX", "captcha_token": "..." }
 post "/otp/request" do
   body = JSON.parse(request.body.read)
   phone = body["phone"]
@@ -47,7 +47,7 @@ post "/otp/request" do
 end
 
 # POST /otp/verify
-# Body: { "phone": "+96598765432", "code": "123456" }
+# Body: { "phone": "+965XXXXXXXX", "code": "123456" }
 post "/otp/verify" do
   body = JSON.parse(request.body.read)
   result = otp_service.verify(body["phone"], body["code"])

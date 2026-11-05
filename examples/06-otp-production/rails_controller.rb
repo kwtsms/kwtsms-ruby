@@ -21,7 +21,7 @@ class OtpController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   # POST /otp/request
-  # Body: { phone: "+96598765432", captcha_token: "..." }
+  # Body: { phone: "+965XXXXXXXX", captcha_token: "..." }
   def request_otp
     phone = params[:phone]
     captcha_token = params[:captcha_token]
@@ -54,7 +54,7 @@ class OtpController < ApplicationController
   end
 
   # POST /otp/verify
-  # Body: { phone: "+96598765432", code: "123456" }
+  # Body: { phone: "+965XXXXXXXX", code: "123456" }
   def verify_otp
     result = OTP_SERVICE.verify(params[:phone], params[:code])
     status = result[:ok] ? :ok : :unprocessable_entity

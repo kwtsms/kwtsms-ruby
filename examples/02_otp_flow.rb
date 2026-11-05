@@ -13,7 +13,7 @@ sms = KwtSMS::Client.from_env
 # Generate a 6-digit OTP
 otp = SecureRandom.random_number(900_000) + 100_000
 
-phone = "96598765432"
+phone = "965XXXXXXXX"
 app_name = "MyApp"
 
 # Always include app name in OTP message (telecom compliance)

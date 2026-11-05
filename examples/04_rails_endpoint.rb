@@ -57,7 +57,7 @@ class SmsController < ApplicationController
   def user_facing_error(result)
     case result["code"]
     when "ERR006", "ERR025"
-      "Please enter a valid phone number in international format (e.g., +965 9876 5432)."
+      "Please enter a valid phone number in international format (e.g., +965 XXXX XXXX)."
     when "ERR003", "ERR010", "ERR011"
       "SMS service is temporarily unavailable. Please try again later."
     when "ERR026"

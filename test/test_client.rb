@@ -2,6 +2,10 @@
 
 require_relative "test_helper"
 
+# 2026-11-05 08:07 +03: phone numbers come from KWTSMS_TEST_NUMBER via test_helper.rb
+# (env_test_number skips when unset); pass-through fields use the placeholder; bulk tests use
+# generated numbers only against webmock stubs (never the network), int-testnumber.
+
 class TestClientInitialization < Minitest::Test
   def test_creates_client_with_valid_credentials
     client = KwtSMS::Client.new("user", "pass")
@@ -127,7 +131,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "OK", result["result"]
     assert_equal "12345", result["msg-id"]
     assert_in_delta 149.0, @client.cached_balance
@@ -147,7 +151,7 @@ class TestClientSend < Minitest::Test
   end
 
   def test_send_with_empty_message_after_cleaning
-    result = @client.send_sms("96598765432", "\u{1F600}\u{1F601}")
+    result = @client.send_sms(env_test_number, "\u{1F600}\u{1F601}")
     assert_equal "ERROR", result["result"]
     assert_equal "ERR009", result["code"]
     assert_includes result["description"], "empty after cleaning"
@@ -162,7 +166,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms(["96598765432", "abc"], "Hello")
+    result = @client.send_sms([env_test_number, "abc"], "Hello")
     assert_equal "OK", result["result"]
     assert result.key?("invalid")
     assert_equal 1, result["invalid"].length
@@ -177,7 +181,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_equal "ERR003", result["code"]
     assert result.key?("action")
@@ -192,7 +196,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_includes result["action"], "country"
   end
@@ -205,7 +209,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_includes result["action"], "country code"
   end
@@ -218,7 +222,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_includes result["action"], "kwtsms.com"
   end
@@ -231,7 +235,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_includes result["action"].downcase, "ip"
   end
@@ -244,7 +248,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     # 2026-10-22 15:34 +03: ERR028 text no longer states a fixed 15 s.
     assert_includes result["action"], "too soon"
@@ -258,7 +262,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert result.key?("action")
   end
@@ -271,7 +275,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     refute result.key?("action")
     assert_equal "Unknown error", result["description"]
@@ -281,14 +285,15 @@ class TestClientSend < Minitest::Test
     stub_request(:post, "https://www.kwtsms.com/API/send/")
       .to_timeout
 
-    result = @client.send_sms("96598765432", "Hello")
+    result = @client.send_sms(env_test_number, "Hello")
     assert_equal "ERROR", result["result"]
     assert_equal "NETWORK", result["code"]
   end
 
   def test_send_deduplicates_numbers
+    n = env_test_number
     stub_request(:post, "https://www.kwtsms.com/API/send/")
-      .with { |req| JSON.parse(req.body)["mobile"] == "96598765432" }
+      .with { |req| JSON.parse(req.body)["mobile"] == n }
       .to_return(
         status: 200,
         body: { "result" => "OK", "msg-id" => "123", "numbers" => 1,
@@ -296,7 +301,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms(["+96598765432", "0096598765432"], "Hello")
+    result = @client.send_sms(["+#{n}", "00#{n}"], "Hello")
     assert_equal "OK", result["result"]
   end
 
@@ -310,7 +315,7 @@ class TestClientSend < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_sms("96598765432", "Hello", sender: "CUSTOM")
+    result = @client.send_sms(env_test_number, "Hello", sender: "CUSTOM")
     assert_equal "OK", result["result"]
   end
 end
@@ -389,13 +394,13 @@ class TestClientValidate < Minitest::Test
         status: 200,
         body: {
           "result" => "OK",
-          "mobile" => { "OK" => ["96598765432"], "ER" => [], "NR" => [] }
+          "mobile" => { "OK" => [TEST_NUMBER_PLACEHOLDER], "ER" => [], "NR" => [] }
         }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.validate(["96598765432"])
-    assert_equal ["96598765432"], result["ok"]
+    result = @client.validate([env_test_number])
+    assert_equal [TEST_NUMBER_PLACEHOLDER], result["ok"]
     assert_empty result["er"]
     assert_nil result["error"]
   end
@@ -413,13 +418,13 @@ class TestClientValidate < Minitest::Test
         status: 200,
         body: {
           "result" => "OK",
-          "mobile" => { "OK" => ["96598765432"], "ER" => [], "NR" => [] }
+          "mobile" => { "OK" => [TEST_NUMBER_PLACEHOLDER], "ER" => [], "NR" => [] }
         }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.validate(["96598765432", "abc"])
-    assert_equal ["96598765432"], result["ok"]
+    result = @client.validate([env_test_number, "abc"])
+    assert_equal [TEST_NUMBER_PLACEHOLDER], result["ok"]
     assert_equal 1, result["rejected"].length
     assert_includes result["rejected"][0]["error"], "no digits found"
   end
@@ -439,7 +444,7 @@ class TestClientSendWithRetry < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_with_retry("96598765432", "Hello", max_retries: 2)
+    result = @client.send_with_retry(env_test_number, "Hello", max_retries: 2)
     assert_equal "OK", result["result"]
     assert_equal "100", result["msg-id"]
   end
@@ -463,7 +468,7 @@ class TestClientSendWithRetry < Minitest::Test
 
     # Stub sleep to avoid waiting in tests (2026-10-22 15:34 +03: wait is wait_seconds, no longer 16 s)
     @client.stub(:sleep, nil) do
-      result = @client.send_with_retry("96598765432", "Hello", max_retries: 3)
+      result = @client.send_with_retry(env_test_number, "Hello", max_retries: 3)
       assert_equal "OK", result["result"]
       assert_equal 3, call_count
     end
@@ -478,7 +483,7 @@ class TestClientSendWithRetry < Minitest::Test
       )
 
     @client.stub(:sleep, nil) do
-      result = @client.send_with_retry("96598765432", "Hello", max_retries: 2)
+      result = @client.send_with_retry(env_test_number, "Hello", max_retries: 2)
       assert_equal "ERROR", result["result"]
       assert_equal "ERR028", result["code"]
     end
@@ -492,7 +497,7 @@ class TestClientSendWithRetry < Minitest::Test
         headers: { "Content-Type" => "application/json" }
       )
 
-    result = @client.send_with_retry("96598765432", "Hello", max_retries: 3)
+    result = @client.send_with_retry(env_test_number, "Hello", max_retries: 3)
     assert_equal "ERROR", result["result"]
     assert_equal "ERR003", result["code"]
   end
@@ -508,7 +513,7 @@ class TestClientSendWithRetry < Minitest::Test
           headers: { "Content-Type" => "application/json" } }
       end
 
-    result = @client.send_with_retry("96598765432", "Hello")
+    result = @client.send_with_retry(env_test_number, "Hello")
     assert_equal "ERR028", result["code"]
     assert_equal 1, call_count
   end
@@ -532,7 +537,7 @@ class TestClientSendWithRetry < Minitest::Test
 
     slept = []
     @client.stub(:sleep, ->(s) { slept << s }) do
-      result = @client.send_with_retry("96598765432", "Hello", max_retries: 1)
+      result = @client.send_with_retry(env_test_number, "Hello", max_retries: 1)
       assert_equal "OK", result["result"]
     end
     assert_equal [10], slept
@@ -570,6 +575,42 @@ class TestClientSendBulk < Minitest::Test
       assert_equal 201, result["numbers"]
       assert_equal 201, result["points-charged"]
       assert_in_delta 799.0, result["balance-after"]
+      assert_empty result["errors"]
+    end
+  end
+
+  # 2026-11-05 08:07 +03: replaces the live 250-number bulk test (it sent to generated
+  # numbers that belong to real people); same 200 + 50 batching, webmock only, int-testnumber.
+  def test_bulk_send_250_numbers_batches_200_and_50
+    numbers = (0...250).map { |i| format("9659876%04d", i) }
+    batch_sizes = []
+
+    stub_request(:post, "https://www.kwtsms.com/API/send/")
+      .with { |req| batch_sizes << JSON.parse(req.body)["mobile"].split(",").length }
+      .to_return(
+        status: 200,
+        body: { "result" => "OK", "msg-id" => "B1", "numbers" => 200,
+                "points-charged" => 200, "balance-after" => 800 }.to_json,
+        headers: { "Content-Type" => "application/json" }
+      ).then
+      .to_return(
+        status: 200,
+        body: { "result" => "OK", "msg-id" => "B2", "numbers" => 50,
+                "points-charged" => 50, "balance-after" => 750 }.to_json,
+        headers: { "Content-Type" => "application/json" }
+      )
+
+    @client.stub(:sleep, nil) do
+      result = @client.send_sms(numbers, "Bulk test 250 numbers")
+      assert_equal "OK", result["result"]
+      assert result["bulk"]
+      assert_equal [200, 50], batch_sizes
+      assert_equal 2, result["batches"]
+      assert_equal %w[B1 B2], result["msg-ids"]
+      assert_equal 250, result["numbers"]
+      assert_equal 250, result["points-charged"]
+      assert_in_delta 750.0, result["balance-after"]
+      assert_in_delta 750.0, @client.cached_balance
       assert_empty result["errors"]
     end
   end

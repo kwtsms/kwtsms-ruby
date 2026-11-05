@@ -19,8 +19,9 @@ module KwtSMS
   # Quick start:
   #   sms = KwtSMS::Client.from_env
   #   ok, balance, err = sms.verify
-  #   result = sms.send_sms("96598765432", "Your OTP for MYAPP is: 123456")
-  #   result = sms.send_sms("96598765432", "Hello", sender: "OTHER-ID")
+  #   result = sms.send_sms("965XXXXXXXX", "Your OTP for MYAPP is: 123456")
+  #   result = sms.send_sms("965XXXXXXXX", "Hello", sender: "OTHER-ID")
+  #   2026-11-05 08:07 +03: placeholder instead of a sample mobile number (it belongs to a real person), int-testnumber.
   #   balance = sms.balance
   class Client
     attr_reader :username, :sender_id, :test_mode, :log_file,

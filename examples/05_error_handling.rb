@@ -7,7 +7,7 @@ require "kwtsms"
 sms = KwtSMS::Client.from_env
 
 # 1. Validate locally before sending
-phone = "+965 9876 5432"
+phone = "+965 XXXX XXXX"
 valid, error, normalized = KwtSMS.validate_phone_input(phone)
 unless valid
   puts "Invalid phone: #{error}"

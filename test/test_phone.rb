@@ -2,41 +2,56 @@
 
 require_relative "test_helper"
 
+# 2026-11-05 08:07 +03: phone numbers come from KWTSMS_TEST_NUMBER via test_helper.rb
+# (env_test_number skips when unset); variants built at runtime, values never printed, int-testnumber.
 class TestNormalizePhone < Minitest::Test
   def test_strips_plus_prefix
-    assert_equal "96598765432", KwtSMS.normalize_phone("+96598765432")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone("+#{n}")
   end
 
   def test_strips_double_zero_prefix
-    assert_equal "96598765432", KwtSMS.normalize_phone("0096598765432")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone("00#{n}")
   end
 
   def test_strips_spaces
-    assert_equal "96598765432", KwtSMS.normalize_phone("+965 9876 5432")
+    n = env_test_number
+    cc, a, b = split_kw(n)
+    assert_same_number n, KwtSMS.normalize_phone("+#{cc} #{a} #{b}")
   end
 
   def test_strips_dashes
-    assert_equal "96598765432", KwtSMS.normalize_phone("+965-9876-5432")
+    n = env_test_number
+    cc, a, b = split_kw(n)
+    assert_same_number n, KwtSMS.normalize_phone("+#{cc}-#{a}-#{b}")
   end
 
   def test_strips_dots
-    assert_equal "96598765432", KwtSMS.normalize_phone("965.9876.5432")
+    n = env_test_number
+    cc, a, b = split_kw(n)
+    assert_same_number n, KwtSMS.normalize_phone("#{cc}.#{a}.#{b}")
   end
 
   def test_strips_parentheses
-    assert_equal "96598765432", KwtSMS.normalize_phone("(965) 98765432")
+    n = env_test_number
+    cc, a, b = split_kw(n)
+    assert_same_number n, KwtSMS.normalize_phone("(#{cc}) #{a}#{b}")
   end
 
   def test_strips_leading_zeros
-    assert_equal "96598765432", KwtSMS.normalize_phone("00096598765432")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone("000#{n}")
   end
 
   def test_converts_arabic_indic_digits
-    assert_equal "96598765432", KwtSMS.normalize_phone("\u0669\u0666\u0665\u0669\u0668\u0667\u0666\u0665\u0664\u0663\u0662")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone(to_arabic_indic(n))
   end
 
   def test_converts_extended_arabic_indic_digits
-    assert_equal "96598765432", KwtSMS.normalize_phone("\u06F9\u06F6\u06F5\u06F9\u06F8\u06F7\u06F6\u06F5\u06F4\u06F3\u06F2")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone(to_persian(n))
   end
 
   def test_empty_string
@@ -52,7 +67,8 @@ class TestNormalizePhone < Minitest::Test
   end
 
   def test_mixed_formats
-    assert_equal "96598765432", KwtSMS.normalize_phone("  +965 (98) 765-432  ")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone("  +965 (#{n[3, 2]}) #{n[5, 3]}-#{n[8, 3]}  ")
   end
 
   # Trunk prefix stripping
@@ -81,23 +97,26 @@ class TestNormalizePhone < Minitest::Test
   end
 
   def test_kuwait_no_trunk_strip
-    assert_equal "96598765432", KwtSMS.normalize_phone("96598765432")
+    n = env_test_number
+    assert_same_number n, KwtSMS.normalize_phone(n)
   end
 end
 
 class TestValidatePhoneInput < Minitest::Test
   def test_valid_international
-    valid, error, normalized = KwtSMS.validate_phone_input("+96598765432")
+    n = env_test_number
+    valid, error, normalized = KwtSMS.validate_phone_input("+#{n}")
     assert valid
     assert_nil error
-    assert_equal "96598765432", normalized
+    assert_same_number n, normalized
   end
 
   def test_valid_with_double_zero
-    valid, error, normalized = KwtSMS.validate_phone_input("0096598765432")
+    n = env_test_number
+    valid, error, normalized = KwtSMS.validate_phone_input("00#{n}")
     assert valid
     assert_nil error
-    assert_equal "96598765432", normalized
+    assert_same_number n, normalized
   end
 
   def test_empty_string
@@ -166,10 +185,11 @@ class TestValidatePhoneInput < Minitest::Test
   end
 
   def test_arabic_digits_valid
-    valid, error, normalized = KwtSMS.validate_phone_input("\u0669\u0666\u0665\u0669\u0668\u0667\u0666\u0665\u0664\u0663\u0662")
+    n = env_test_number
+    valid, error, normalized = KwtSMS.validate_phone_input(to_arabic_indic(n))
     assert valid
     assert_nil error
-    assert_equal "96598765432", normalized
+    assert_same_number n, normalized
   end
 
   def test_nil_input
@@ -179,10 +199,11 @@ class TestValidatePhoneInput < Minitest::Test
   end
 
   def test_numeric_input
-    valid, error, normalized = KwtSMS.validate_phone_input(96598765432)
+    n = env_test_number
+    valid, error, normalized = KwtSMS.validate_phone_input(Integer(n, 10))
     assert valid
     assert_nil error
-    assert_equal "96598765432", normalized
+    assert_same_number n, normalized
   end
 
   def test_dashes_only
@@ -216,7 +237,7 @@ end
 
 class TestFindCountryCode < Minitest::Test
   def test_3_digit_code
-    assert_equal "965", KwtSMS.find_country_code("96598765432")
+    assert_equal "965", KwtSMS.find_country_code(env_test_number)
   end
 
   def test_2_digit_code
@@ -244,13 +265,13 @@ end
 class TestValidatePhoneFormat < Minitest::Test
   # Kuwait
   def test_valid_kuwait_mobile
-    valid, error = KwtSMS.validate_phone_format("96598765432")
+    valid, error = KwtSMS.validate_phone_format(env_test_number)
     assert valid
     assert_nil error
   end
 
   def test_kuwait_wrong_length
-    valid, error = KwtSMS.validate_phone_format("9659876543")
+    valid, error = KwtSMS.validate_phone_format(env_test_number[0..-2])
     refute valid
     assert_includes error, "Kuwait"
     assert_includes error, "8 digits"
@@ -341,7 +362,8 @@ class TestValidatePhoneFormat < Minitest::Test
 
   # India
   def test_valid_india_mobile
-    valid, error = KwtSMS.validate_phone_format("919876543210")
+    # 2026-11-05 08:07 +03: old India sample contained the removed Kuwait sample digits, int-testnumber.
+    valid, error = KwtSMS.validate_phone_format("919123456780")
     assert valid
     assert_nil error
   end

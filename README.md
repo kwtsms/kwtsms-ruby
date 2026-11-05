@@ -52,7 +52,7 @@ ok, balance, err = sms.verify
 puts "Balance: #{balance}" if ok
 
 # Send SMS
-result = sms.send_sms("96598765432", "Your OTP for MyApp is: 123456")
+result = sms.send_sms("965XXXXXXXX", "Your OTP for MyApp is: 123456")
 puts "msg-id: #{result['msg-id']}" if result["result"] == "OK"
 ```
 
@@ -109,13 +109,13 @@ Send SMS to one or more numbers.
 
 ```ruby
 # Single number
-result = sms.send_sms("96598765432", "Hello!")
+result = sms.send_sms("965XXXXXXXX", "Hello!")
 
 # Multiple numbers
-result = sms.send_sms(["96598765432", "96512345678"], "Bulk message")
+result = sms.send_sms(["965XXXXXXXX", "96512345678"], "Bulk message")
 
 # Override sender ID
-result = sms.send_sms("96598765432", "Hello!", sender: "MY-APP")
+result = sms.send_sms("965XXXXXXXX", "Hello!", sender: "MY-APP")
 ```
 
 Response on success:
@@ -136,7 +136,7 @@ Response on success:
 Send with optional retry on ERR028. ERR028 comes from Duplicate SMS protection, which is opt-in per account (in the account's API settings). When it is on and any number in the request was sent the same message within the account's window (10 seconds by default, configurable per account), the whole request is rejected with ERR028 and nothing is charged. Retry is off by default (`max_retries: 0`); set `wait_seconds:` to your account's window.
 
 ```ruby
-result = sms.send_with_retry("96598765432", "Hello!", max_retries: 1, wait_seconds: 10)
+result = sms.send_with_retry("965XXXXXXXX", "Hello!", max_retries: 1, wait_seconds: 10)
 ```
 
 ### senderids
@@ -161,7 +161,7 @@ result = sms.coverage
 Validate phone numbers.
 
 ```ruby
-result = sms.validate(["96598765432", "invalid", "+96512345678"])
+result = sms.validate(["965XXXXXXXX", "invalid", "+96512345678"])
 puts result["ok"]        # valid numbers
 puts result["er"]        # error numbers
 puts result["rejected"]  # locally rejected with error messages
@@ -171,7 +171,7 @@ puts result["rejected"]  # locally rejected with error messages
 
 ```ruby
 # Normalize phone number: Arabic digits, strip non-digits, strip leading zeros
-KwtSMS.normalize_phone("+965 9876 5432")  # => "96598765432"
+KwtSMS.normalize_phone("+965 XXXX XXXX")  # => "965XXXXXXXX"
 
 # Validate phone input (returns [valid, error, normalized])
 valid, error, normalized = KwtSMS.validate_phone_input("user@email.com")
@@ -212,21 +212,23 @@ All formats are accepted and normalized automatically:
 
 | Input | Normalized | Valid? |
 |-------|-----------|--------|
-| `96598765432` | `96598765432` | Yes |
-| `+96598765432` | `96598765432` | Yes |
-| `0096598765432` | `96598765432` | Yes |
-| `965 9876 5432` | `96598765432` | Yes |
-| `965-9876-5432` | `96598765432` | Yes |
-| `(965) 98765432` | `96598765432` | Yes |
-| `٩٦٥٩٨٧٦٥٤٣٢` | `96598765432` | Yes |
-| `۹۶۵۹۸۷۶۵۴۳۲` | `96598765432` | Yes |
-| `+٩٦٥٩٨٧٦٥٤٣٢` | `96598765432` | Yes |
-| `٠٠٩٦٥٩٨٧٦٥٤٣٢` | `96598765432` | Yes |
-| `٩٦٥ ٩٨٧٦ ٥٤٣٢` | `96598765432` | Yes |
-| `٩٦٥-٩٨٧٦-٥٤٣٢` | `96598765432` | Yes |
-| `965٩٨٧٦٥٤٣٢` | `96598765432` | Yes |
+| `965XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `+965XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `00965XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `965 XXXX XXXX` | `965XXXXXXXX` | Yes |
+| `965-XXXX-XXXX` | `965XXXXXXXX` | Yes |
+| `(965) XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `٩٦٥XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `۹۶۵XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `+٩٦٥XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `٠٠٩٦٥XXXXXXXX` | `965XXXXXXXX` | Yes |
+| `٩٦٥ XXXX XXXX` | `965XXXXXXXX` | Yes |
+| `٩٦٥-XXXX-XXXX` | `965XXXXXXXX` | Yes |
+| `965` + 8 Arabic-Indic digits | `965XXXXXXXX` | Yes |
 | `123456` (too short) | rejected | No |
 | `user@gmail.com` | rejected | No |
+
+`X` stands for any digit, in Latin, Arabic-Indic or Persian digits.
 
 Normalization rules:
 - Arabic-Indic and Extended Arabic-Indic digits converted to Latin
@@ -331,7 +333,7 @@ Before going live:
 Every API call is logged to a JSONL file (default: `kwtsms.log`):
 
 ```json
-{"ts":"2026-03-06T12:00:00Z","endpoint":"send","request":{"username":"ruby_username","password":"***","mobile":"96598765432","message":"Hello"},"response":{"result":"OK","msg-id":"12345"},"ok":true,"error":null}
+{"ts":"2026-03-06T12:00:00Z","endpoint":"send","request":{"username":"ruby_username","password":"***","mobile":"965XXXXXXXX","message":"Hello"},"response":{"result":"OK","msg-id":"12345"},"ok":true,"error":null}
 ```
 
 Passwords are always masked as `***`. Logging never crashes the main flow.

@@ -25,7 +25,10 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
+      # 2026-11-05 08:07 +03: test number from the repo secret; tests that need it skip when unset (int-testnumber).
       - name: Run unit and mocked tests
+        env:
+          KWTSMS_TEST_NUMBER: ${{ secrets.KWTSMS_TEST_NUMBER }}
         run: bundle exec rake test
 
       - name: Run integration tests
