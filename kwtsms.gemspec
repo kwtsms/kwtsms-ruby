@@ -7,7 +7,8 @@ Gem::Specification.new do |spec|
   spec.version       = KwtSMS::VERSION
   # 2026-11-05 12:08 +03: author boxlink -> kwtSMS, owner decision 2026-11-05 00:34, int-license
   spec.authors       = ["kwtSMS"]
-  spec.email         = ["info@boxlink.net"]
+  # 2026-11-06 22:33 +03: contact email info@boxlink.net -> support@kwtsms.com (Boss ok 22:3x via manager, task #1012)
+  spec.email         = ["support@kwtsms.com"]
 
   spec.summary       = "Ruby client for the kwtSMS API (kwtsms.com)"
   spec.description   = "Official Ruby client library for the kwtSMS SMS gateway. Send SMS, check balance, validate phone numbers, check delivery status, and manage sender IDs. Zero external dependencies."
