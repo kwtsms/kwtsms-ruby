@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-07
+
 ### Added
 - The client sends a User-Agent `kwtsms-ruby/<version>` (name and version only, no personal data) so kwtSMS can see which integrations are in use. An optional `app_name:` keyword on `KwtSMS::Client.new` puts your app's token in front, e.g. `kwtsms-wordpress/3.5.2 kwtsms-ruby/0.3.1`. New `KwtSMS.build_user_agent` and `client.user_agent`.
 
 ### Changed
-- Package author and license holder are now kwtSMS.
+- Package author and license holder are now kwtSMS; contact email support@kwtsms.com.
 
 - `send_with_retry`: ERR028 retry is now off by default (`max_retries: 0`), and the wait is a new `wait_seconds:` keyword (default 10) instead of a hardcoded 16 seconds. Duplicate SMS protection (ERR028) is opt-in per account and its window is configurable per account (10 seconds by default); when on, the whole request is rejected and nothing is charged.
 - ERR028 action text no longer states a fixed 15 seconds.
