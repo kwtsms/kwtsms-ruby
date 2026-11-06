@@ -33,14 +33,8 @@ class TestIntegration < Minitest::Test
     assert_nil err
   end
 
-  def test_verify_wrong_credentials
-    bad_client = KwtSMS::Client.new("ruby_wrong_user", "ruby_wrong_pass", test_mode: true, log_file: "")
-    ok, balance, err = bad_client.verify
-    refute ok
-    assert_nil balance
-    assert_kind_of String, err
-    assert(!err.empty?)
-  end
+  # 2026-11-07 00:03 +03: wrong-credential test mocked; live failed logins trip the security log (task neg-auth-tests).
+  # test_verify_wrong_credentials removed: covered offline by test_verify_auth_error (test_client.rb, mocked ERR003).
 
   # -- balance --
 
