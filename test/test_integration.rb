@@ -17,6 +17,10 @@ class TestIntegration < Minitest::Test
 
     skip "RUBY_USERNAME / RUBY_PASSWORD not set" unless @username && !@username.empty? && @password && !@password.empty?
 
+    # 2026-11-07 20:21 +03: pace live calls (security #946, incident 21445): the API bans bursts over about 8 calls in 10 s,
+    # and 16 tests back to back made 9 calls in 3 s. 2 s per test keeps a run well under the limit.
+    sleep 2
+
     @client = KwtSMS::Client.new(@username, @password, test_mode: true, log_file: "")
   end
 
