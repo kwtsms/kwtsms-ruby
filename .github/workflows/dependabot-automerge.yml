@@ -3,19 +3,22 @@ name: Dependabot Auto-Merge
 on:
   pull_request:
 
+# 2026-11-08 13:40 +03: read-only token by default; jobs that write declare it (Scorecard TokenPermissions, repo sweep)
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     if: github.actor == 'dependabot[bot]'
 
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
         with:
           github-token: ${{ github.token }}
 
