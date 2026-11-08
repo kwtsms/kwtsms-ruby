@@ -17,10 +17,9 @@
 #   OTP_SERVICE = KwtSMS::OTP::Service.new(KWTSMS_CLIENT, OTP_STORE, app_name: "MyApp")
 #   OTP_RATE_LIMITER = KwtSMS::OTP::RateLimiter.new
 
-# 2026-11-08 13:49 +03: JSON endpoints in a full Rails app: keep CSRF protection on, with :null_session so API requests
-# without a browser session are not rejected (CodeQL rb/csrf-protection-*).
+# 2026-11-08 13:53 +03: Rails' default CSRF protection stays on (ApplicationController). Your page's JavaScript sends the
+# token from <%= csrf_meta_tags %> in the X-CSRF-Token header (Rails UJS / Turbo do it for you).
 class OtpController < ApplicationController
-  protect_from_forgery with: :null_session
 
   # POST /otp/request
   # Body: { phone: "+965XXXXXXXX", captcha_token: "..." }
