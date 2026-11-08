@@ -137,8 +137,9 @@ class TestCleanMessage < Minitest::Test
 
   # 2026-11-08 13:37 +03: strip_tags equals the old regex and stays linear (repo sweep, CodeQL)
   def test_strip_tags_matches_old_regex
-    ["", "plain", "<b>x</b>", "a < b and c > d", "<a <b>", "<<<", ">>><<", "x<y", "<scr<script>ipt>", "a<b>c<d", "<>"].each do |c|
-      assert_equal c.gsub(/<[^>]*>/, ""), KwtSMS.strip_tags(c), c.inspect
+    # expected values are what the old gsub(/<[^>]*>/, "") returned
+    {"" => "", "plain" => "plain", "<b>x</b>" => "x", "a < b and c > d" => "a  d", "<a <b>" => "", "<<<" => "<<<", ">>><<" => ">>><<", "x<y" => "x<y", "<scr<script>ipt>" => "ipt>", "a<b>c<d" => "ac<d", "<>" => ""}.each do |c, want|
+      assert_equal want, KwtSMS.strip_tags(c), c.inspect
     end
   end
 
