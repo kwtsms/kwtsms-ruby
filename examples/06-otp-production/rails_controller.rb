@@ -17,8 +17,9 @@
 #   OTP_SERVICE = KwtSMS::OTP::Service.new(KWTSMS_CLIENT, OTP_STORE, app_name: "MyApp")
 #   OTP_RATE_LIMITER = KwtSMS::OTP::RateLimiter.new
 
+# 2026-11-08 13:53 +03: Rails' default CSRF protection stays on (ApplicationController). Your page's JavaScript sends the
+# token from <%= csrf_meta_tags %> in the X-CSRF-Token header (Rails UJS / Turbo do it for you).
 class OtpController < ApplicationController
-  skip_before_action :verify_authenticity_token
 
   # POST /otp/request
   # Body: { phone: "+965XXXXXXXX", captcha_token: "..." }
