@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "lib/kwtsms/version.rb"
+  # 2026-11-08 13:31 +03: manual run to re-check (repo sweep, Boss 13:29)
+  workflow_dispatch:
 
 jobs:
   tag:
@@ -37,6 +39,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="v${{ steps.version.outputs.new }}"
+          # 2026-11-08 13:31 +03: skip when the tag already exists (v0.4.0 was tagged by hand and this job failed)
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "$TAG already exists, nothing to do"; exit 0
+          fi
           git tag "$TAG"
           git push origin "$TAG"
           echo "Tagged $TAG"
