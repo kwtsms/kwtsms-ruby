@@ -17,7 +17,13 @@ module KwtSMS
   # leading/trailing "-" are trimmed, and it is cut to 64 characters. Empty means the library token only.
   # 2026-11-05 14:19 +03: added so kwtSMS can count accounts per integration (#939).
   def self.build_user_agent(app_name = "")
-    app = app_name.to_s.gsub(/[^\x20-\x7e]+/, "").strip.gsub(/\s+/, "-").gsub(/\A-+|-+\z/, "")[0, 64]
+    # 2026-11-08 13:37 +03: dashes trimmed by scanning; /\A-+|-+\z/ is quadratic on long "-" runs (CodeQL rb/polynomial-redos)
+    app = app_name.to_s.gsub(/[^\x20-\x7e]+/, "").strip.gsub(/\s+/, "-")
+    first = 0
+    last = app.length
+    first += 1 while first < last && app[first] == "-"
+    last -= 1 while last > first && app[last - 1] == "-"
+    app = app[first...last][0, 64]
     lib = "kwtsms-ruby/#{VERSION}"
     app.empty? ? lib : "#{app} #{lib}"
   end

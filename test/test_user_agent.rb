@@ -49,4 +49,12 @@ class TestUserAgent < Minitest::Test
     assert ok, err
     assert_requested stub
   end
+
+  # 2026-11-08 13:37 +03: dash trim by scanning (repo sweep, CodeQL)
+  def test_dashes_trimmed_and_fast
+    assert_equal "x #{LIB}", KwtSMS.build_user_agent("--x--")
+    t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    KwtSMS.build_user_agent("-" * 200_000 + "a")
+    assert_operator Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0, :<, 1.0
+  end
 end
