@@ -134,4 +134,17 @@ class TestCleanMessage < Minitest::Test
     result = KwtSMS.clean_message(input)
     assert_equal "Hello  123", result
   end
+
+  # 2026-11-08 13:37 +03: strip_tags equals the old regex and stays linear (repo sweep, CodeQL)
+  def test_strip_tags_matches_old_regex
+    ["", "plain", "<b>x</b>", "a < b and c > d", "<a <b>", "<<<", ">>><<", "x<y", "<scr<script>ipt>", "a<b>c<d", "<>"].each do |c|
+      assert_equal c.gsub(/<[^>]*>/, ""), KwtSMS.strip_tags(c), c.inspect
+    end
+  end
+
+  def test_strip_tags_is_linear
+    t0 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    KwtSMS.strip_tags("<" * 200_000)
+    assert_operator Process.clock_gettime(Process::CLOCK_MONOTONIC) - t0, :<, 1.0
+  end
 end

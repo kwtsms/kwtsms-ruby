@@ -56,6 +56,23 @@ module KwtSMS
   #
   # Does NOT strip Arabic letters. Arabic text is fully supported.
   # Returns "" if the entire message was emoji or invisible characters.
+  # Removes HTML tags: same result as text.gsub(/<[^>]*>/, "") but linear on long runs of "<".
+  # 2026-11-08 13:37 +03: repo sweep (CodeQL rb/polynomial-redos).
+  def self.strip_tags(text)
+    out = +""
+    i = 0
+    while i < text.length
+      lt = text.index("<", i)
+      break if lt.nil?
+      gt = text.index(">", lt + 1)
+      break if gt.nil?
+      out << text[i...lt]
+      i = gt + 1
+    end
+    out << text[i..-1].to_s
+    out
+  end
+
   def self.clean_message(text)
     text = text.to_s
 
@@ -63,7 +80,7 @@ module KwtSMS
     text = text.tr(ARABIC_DIGITS + EXTENDED_ARABIC_DIGITS, LATIN_DIGITS)
 
     # 2. Strip HTML tags
-    text = text.gsub(/<[^>]*>/, "")
+    text = strip_tags(text) # 2026-11-08 13:37 +03: linear, same result as gsub(/<[^>]*>/, "") (CodeQL rb/polynomial-redos)
 
     # 3. Remove emojis and pictographic characters, hidden chars, directional chars,
     #    and C0/C1 control characters (except \n and \t)
