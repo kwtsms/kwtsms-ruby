@@ -17,8 +17,9 @@
 #   OTP_SERVICE = KwtSMS::OTP::Service.new(KWTSMS_CLIENT, OTP_STORE, app_name: "MyApp")
 #   OTP_RATE_LIMITER = KwtSMS::OTP::RateLimiter.new
 
-class OtpController < ApplicationController
-  skip_before_action :verify_authenticity_token
+# 2026-11-08 13:39 +03: JSON-only API controller: ActionController::API has no cookie session, so no CSRF token is needed
+# (instead of switching CSRF protection off; CodeQL rb/csrf-protection-disabled).
+class OtpController < ActionController::API
 
   # POST /otp/request
   # Body: { phone: "+965XXXXXXXX", captcha_token: "..." }
