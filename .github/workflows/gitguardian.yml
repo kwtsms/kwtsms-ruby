@@ -6,17 +6,21 @@ on:
   pull_request:
     branches: [main]
 
+# 2026-11-08 13:40 +03: read-only token by default; jobs that write declare it (Scorecard TokenPermissions, repo sweep)
+permissions:
+  contents: read
+
 jobs:
   scanning:
     # 2026-11-06 23:22 +03: skip on Dependabot PRs: they get no repo secrets, so the scan always failed (Boss 22:4x 'ok skip', task #1017)
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
 
       - name: GitGuardian scan
-        uses: GitGuardian/ggshield-action@v1
+        uses: GitGuardian/ggshield-action@5cc1ed2be3e8bf625d354c7170731880670f74de # v1
         env:
           GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
