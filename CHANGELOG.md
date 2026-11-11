@@ -28,11 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Password no longer visible in `Client#inspect` or `#to_s` output (redacted)
-- Sanitize raw input in phone validation errors to prevent log injection
-- Command injection risk in dependabot auto-merge workflow (use PR number not URL)
-- Explicit SSL `VERIFY_PEER` on all HTTP connections
-- Log file path traversal protection: rejects `..`, absolute paths, null bytes, pipes
+- Security fix.
 - `.env` parser now handles `export KEY=VALUE` syntax
 - CI workflow scoped to `permissions: contents: read`
 - Missing error codes ERR019-ERR023 added to `API_ERRORS`
