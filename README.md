@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/readme-header-dark.png">
+  <img alt="kwtSMS for Ruby: SMS and OTP through kwtSMS" src=".github/assets/readme-header-light.png">
+</picture>
+
 # kwtSMS Ruby Client
 
 [![Gem Version](https://img.shields.io/gem/v/kwtsms.svg)](https://rubygems.org/gems/kwtsms)
